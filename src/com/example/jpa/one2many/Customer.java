@@ -1,0 +1,106 @@
+package com.example.jpa.one2many;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+
+@Table(name="JPA_CUSTOMER")
+//@Entity
+public class Customer {
+	private Integer id;
+	private String lastName;
+	
+	private String email;
+	private int age;
+	
+	private Date createTime;
+	private Date birth;
+	
+	private Set<Order> orders=new HashSet<Order>();
+//	@TableGenerator(name="ID_GENERATOR",
+//			table="JPA_ID_GENERATORS",
+//			pkColumnName="PK_NAME",
+//			pkColumnValue="CUSTOMER_ID",
+//			valueColumnName="PK_VALUE",
+//			allocationSize=10)
+//	@GeneratedValue(strategy=GenerationType.TABLE,generator="ID_GENERATOR")
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Id
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	@Column(name="Last_Name")
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	
+	public Date getCreateTime() {
+		return createTime;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	@Temporal(TemporalType.DATE)
+	public Date getBirth() {
+		return birth;
+	}
+	public void setBirth(Date birth) {
+		this.birth = birth;
+	}
+	//映射单向1-n的关联关系
+	//使用@OneToMany来映射1-n的关联关系
+	//使用@JoinColumn来映射外键列的名称
+	//可以使用@OneToMany的fetch属性来修改默认的加载策略
+	//可以通过 @OneToMany 的 cascade 属性来修改默认的删除策略.
+    @JoinColumn(name="CUSTOMER_ID")
+	@OneToMany(fetch=FetchType.EAGER,cascade={CascadeType.REMOVE})
+	public Set<Order> getOrders() {
+		return orders;
+	}
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
+	}
+	//工具方法,不需要映射为数据表的一列
+	@Transient
+	public String getInfo(){
+		return "lastName=" + lastName + ", email=" + email;
+	}
+	
+	
+}
